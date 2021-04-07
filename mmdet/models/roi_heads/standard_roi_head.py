@@ -240,12 +240,16 @@ class StandardRoIHead(BaseRoIHead, BBoxTestMixin, MaskTestMixin):
                     proposal_list,
                     img_metas,
                     proposals=None,
-                    rescale=False):
+                    rescale=False,
+                    ifdet = False,
+                    test_cfg_id = 0):
         """Test without augmentation."""
         assert self.with_bbox, 'Bbox head must be implemented.'
 
         det_bboxes, det_labels = self.simple_test_bboxes(
             x, img_metas, proposal_list, self.test_cfg, rescale=rescale)
+        if ifdet:
+            return det_bboxes, det_labels
         if torch.onnx.is_in_onnx_export():
             if self.with_mask:
                 segm_results = self.simple_test_mask(
